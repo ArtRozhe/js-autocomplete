@@ -2,12 +2,24 @@
  * AutoComplete component
  */
 export default class AutoComplete {
+    /**
+     * Создание экземпляра компонента
+     * @param {Object} options - options of the component
+     * @param {boolean} options.autoRun - auto run of the component
+     * @param {Object|string|Array} options.containers - DOM containers
+     * @param {number} options.delay - the number of milliseconds that the component waits to send a request to the data provider
+     * @param {number} options.minChars - the minimum number of entered characters to send requests to the data provider
+     * @param {function} options.generateLayoutSuggestion - the markup generation function for each suggestion
+     * @param {Object} options.dataSource - the data provider to which the component sends a request to receive the data set
+     */
     constructor(options) {
         this.options = {
             autoRun: true,
             containers: null,
             delay: 100,
-            minChars: 3
+            minChars: 3,
+            generateLayoutSuggestion: this.constructor._defaultGenerateLayoutSuggestion,
+            dataSourceProvider: null
         };
 
         this._setOptions(options);
@@ -16,6 +28,22 @@ export default class AutoComplete {
         if (this.options.autoRun) {
             this.run();
         }
+    }
+
+    /**
+     * The default markup generation function for each suggestion
+     * @param {string} suggestionText - suggestion text
+     * @param {string} searchingText - searching text
+     * @returns {string} resultHtml - generated markup for a suggestion
+     * @private
+     */
+    static _defaultGenerateLayoutSuggestion(suggestionText, searchingText) {
+        let resultHtml = '';
+
+        console.log('--- searchingText ---', searchingText);
+        resultHtml = `${resultHtml}<div>${suggestionText}</div>`;
+
+        return resultHtml;
     }
 
     /**
