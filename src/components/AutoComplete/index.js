@@ -106,7 +106,56 @@ export default class AutoComplete {
     static _createDomEl(className) {
         const element = document.createElement('div');
         element.classList.add(className);
+        element.innerHTML = '<div class="auto-complete-suggestion">Test 1</div><div class="auto-complete-suggestion">Test 2</div>';
         return element;
+    }
+
+    static _getParentByClassName(element, className, stopClassName) {
+        if (!element || element.classList.contains(stopClassName)) {
+            return null;
+        }
+
+        if (element.classList.contains(className)) {
+            return element;
+        }
+
+        return this.constructor._getParentByClassName(element.parentNode, className, stopClassName);
+    }
+
+    /**
+     * Handling mouse over event on a suggestion
+     * @param {Object} suggestion - suggestion
+     * @param {Object} autocompleteContainer - autocomplete component DOM container
+     * @returns {undefined}
+     * @private
+     */
+    static _onSuggestionMouseOver(suggestion, autocompleteContainer) {
+        console.log('--- mouse over ---', suggestion);
+        console.log('--- autocompleteContainer ---', autocompleteContainer);
+    }
+
+    /**
+     * Handling mouse out event on a suggestion
+     * @param {Object} suggestion - suggestion
+     * @param {Object} autocompleteContainer - autocomplete component DOM container
+     * @returns {undefined}
+     * @private
+     */
+    static _onSuggestionMouseOut(suggestion, autocompleteContainer) {
+        console.log('--- mouse out ---', suggestion);
+        console.log('--- autocompleteContainer ---', autocompleteContainer);
+    }
+
+    /**
+     * Handling mouse down event on a suggestion
+     * @param {Object} suggestion - suggestion
+     * @param {Object} autocompleteContainer - autocomplete component DOM container
+     * @returns {undefined}
+     * @private
+     */
+    static _onSuggestionMouseDown(suggestion, autocompleteContainer) {
+        console.log('--- mouse down ---', suggestion);
+        console.log('--- autocompleteContainer ---', autocompleteContainer);
     }
 
     /**
@@ -116,9 +165,8 @@ export default class AutoComplete {
      * @returns {undefined}
      * @private
      */
-    _onInputHandler(autocompleteContainer, event) {
+    static _onInputHandler(autocompleteContainer, event) {
         console.log(autocompleteContainer);
-        console.log('--- context input ---', this);
         console.log('--- event input ---', event);
     }
 
@@ -129,27 +177,25 @@ export default class AutoComplete {
      * @returns {undefined}
      * @private
      */
-    _onKeyDownHandler(autocompleteContainer, event) {
+    static _onKeyDownHandler(autocompleteContainer, event) {
         console.log(autocompleteContainer);
         const keyCode = event.which || event.keyCode;
 
         if (keyCode === charCodes.down) {
-            console.log('"DownArrow"');
+            console.log('--- key down "DownArrow" ---');
         }
 
         if (keyCode === charCodes.up) {
-            console.log('"UpArrow"');
+            console.log('--- key down "DownUp" ---');
         }
 
         if (keyCode === charCodes.esc) {
-            console.log('"Esc"');
+            console.log('--- key down "Esc" ---');
         }
 
         if (keyCode === charCodes.enter) {
-            console.log('"Enter"');
+            console.log('--- key down "Enter" ---');
         }
-
-        console.log('--- context key down ---', this);
     }
 
     /**
@@ -159,9 +205,34 @@ export default class AutoComplete {
      * @private
      */
     _bindEventListeners(container) {
-        const containerInput = container.querySelector('.auto-complete-input');
-        container.keyDownHandler = this._onKeyDownHandler.bind(this, container);
-        container.onInputHandler = this._onInputHandler.bind(this, container);
+        const
+            containerInput = container.querySelector('.auto-complete-input'),
+            suggestionsContainer = container.querySelector('.suggestions-container'),
+            componentContext = this;
+
+        suggestionsContainer.addEventListener('mouseover', (event) => {
+            const suggestion = componentContext.constructor._getParentByClassName(event.target, 'auto-complete-suggestion', 'suggestions-container');
+            if (suggestion) {
+                componentContext.constructor._onSuggestionMouseOver(suggestion, container);
+            }
+        });
+
+        suggestionsContainer.addEventListener('mouseout', (event) => {
+            const suggestion = componentContext.constructor._getParentByClassName(event.target, 'auto-complete-suggestion', 'suggestions-container');
+            if (suggestion) {
+                componentContext.constructor._onSuggestionMouseOut(suggestion, container);
+            }
+        });
+
+        suggestionsContainer.addEventListener('mousedown', (event) => {
+            const suggestion = componentContext.constructor._getParentByClassName(event.target, 'auto-complete-suggestion', 'suggestions-container');
+            if (suggestion) {
+                componentContext.constructor._onSuggestionMouseDown(suggestion, container);
+            }
+        });
+
+        container.keyDownHandler = this.constructor._onKeyDownHandler.bind(this, container);
+        container.onInputHandler = this.constructor._onInputHandler.bind(this, container);
 
         containerInput.addEventListener('keydown', container.keyDownHandler);
         containerInput.addEventListener('input', container.onInputHandler);
