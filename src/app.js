@@ -1,6 +1,7 @@
 import AutoComplete from './components/AutoComplete';
 import LocalDataProvider from './data-providers/local';
 import ApiDataProvider from './data-providers/api';
+import './assets/scss/app.scss';
 
 const
     autoComplete = new AutoComplete({
@@ -15,7 +16,7 @@ const
         useCache: false
     });
 
-autoComplete.destroy();
+console.log(autoComplete);
 
 localDataProvider.getDataSet('test')
     .then(dataSet => {

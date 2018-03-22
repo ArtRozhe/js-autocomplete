@@ -1,3 +1,10 @@
+const charCodes = {
+    'up': 38,
+    'down': 40,
+    'esc': 27,
+    'enter': 13
+};
+
 /**
  * AutoComplete component
  */
@@ -91,16 +98,73 @@ export default class AutoComplete {
     }
 
     /**
-     * Binding event listeners to each DOM container
+     * Create DOM element by class name
+     * @param {string} className - class name
+     * @returns {Object} element - DOM element
+     * @private
+     */
+    static _createDomEl(className) {
+        const element = document.createElement('div');
+        element.classList.add(className);
+        return element;
+    }
+
+    /**
+     * Input value change handler
+     * @param {Object} autocompleteContainer - autocomplete DOM-container
+     * @param {Object} event - input event
      * @returns {undefined}
      * @private
      */
-    _bindEventListeners() {
-        const containers = this._getContainers();
+    _onInputHandler(autocompleteContainer, event) {
+        console.log(autocompleteContainer);
+        console.log('--- context input ---', this);
+        console.log('--- event input ---', event);
+    }
 
-        containers.forEach((container) => {
-            console.log('binding event listener on: ', container);
-        });
+    /**
+     * Key down handler
+     * @param {Object} autocompleteContainer - autocomplete DOM-container
+     * @param {Object} event - input event
+     * @returns {undefined}
+     * @private
+     */
+    _onKeyDownHandler(autocompleteContainer, event) {
+        console.log(autocompleteContainer);
+        const keyCode = event.which || event.keyCode;
+
+        if (keyCode === charCodes.down) {
+            console.log('"DownArrow"');
+        }
+
+        if (keyCode === charCodes.up) {
+            console.log('"UpArrow"');
+        }
+
+        if (keyCode === charCodes.esc) {
+            console.log('"Esc"');
+        }
+
+        if (keyCode === charCodes.enter) {
+            console.log('"Enter"');
+        }
+
+        console.log('--- context key down ---', this);
+    }
+
+    /**
+     * Binding event listeners to the DOM container
+     * @param {Object} container -
+     * @returns {undefined}
+     * @private
+     */
+    _bindEventListeners(container) {
+        const containerInput = container.querySelector('.auto-complete-input');
+        container.keyDownHandler = this._onKeyDownHandler.bind(this, container);
+        container.onInputHandler = this._onInputHandler.bind(this, container);
+
+        containerInput.addEventListener('keydown', container.keyDownHandler);
+        containerInput.addEventListener('input', container.onInputHandler);
     }
 
     /**
@@ -108,7 +172,18 @@ export default class AutoComplete {
      * @returns {undefined}
      */
     run() {
-        this._bindEventListeners();
+        const
+            containers = this._getContainers(),
+            componentContext = this;
+
+        if (!containers) {
+            return;
+        }
+
+        containers.forEach((container) => {
+            container.appendChild(componentContext.constructor._createDomEl('suggestions-container'));
+            componentContext._bindEventListeners(container);
+        });
     }
 
     /**
@@ -116,6 +191,17 @@ export default class AutoComplete {
      * @returns {undefined}
      */
     destroy() {
-        console.log('destroy: ', this);
+        const containers = this._getContainers();
+
+        if (!containers) {
+            return;
+        }
+
+        containers.forEach(container => {
+            const containerInput = container.querySelector('.auto-complete-input');
+
+            containerInput.removeEventListener('keydown', container.keyDownHandler);
+            containerInput.removeEventListener('input', container.onInputHandler);
+        });
     }
 }

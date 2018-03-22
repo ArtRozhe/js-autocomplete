@@ -1,5 +1,29 @@
 @import '_color';
+
 body {
   background: $bgcolor;
   color: $color;
+}
+
+.auto-complete,
+.auto-complete * {
+  box-sizing: border-box;
+}
+
+.auto-complete {
+  position: relative;
+  display: inline-block;
+}
+
+.suggestions-container {
+  display: none;
+  position: absolute;
+  width: 100%;
+  top: 100%;
+  max-height: 220px;
+  border: 1px solid black;
+}
+
+.suggestions-container_show {
+  display: block;
 }
