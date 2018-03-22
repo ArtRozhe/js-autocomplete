@@ -16,7 +16,7 @@ const
         useCache: false
     });
 
-console.log(autoComplete);
+window.autoComplete = autoComplete;
 
 localDataProvider.getDataSet('test')
     .then(dataSet => {

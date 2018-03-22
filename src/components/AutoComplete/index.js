@@ -110,6 +110,14 @@ export default class AutoComplete {
         return element;
     }
 
+    /**
+     * Getting parent element with needed className
+     * @param {Object} element - the element from which the search begins
+     * @param {string} className - className the element must have
+     * @param {string} stopClassName - if an element has stopClassName, then the function returns null in any case
+     * @returns {Object} - element with needed className
+     * @private
+     */
     static _getParentByClassName(element, className, stopClassName) {
         if (!element || element.classList.contains(stopClassName)) {
             return null;
@@ -171,6 +179,18 @@ export default class AutoComplete {
     }
 
     /**
+     * Blur event handler
+     * @param {Object} autocompleteContainer - autocomplete DOM-container
+     * @param {Object} event - blur event
+     * @returns {undefined}
+     * @private
+     */
+    static _onBlurHandler(autocompleteContainer, event) {
+        console.log(autocompleteContainer);
+        console.log('--- event blur ---', event);
+    }
+
+    /**
      * Key down handler
      * @param {Object} autocompleteContainer - autocomplete DOM-container
      * @param {Object} event - input event
@@ -210,32 +230,37 @@ export default class AutoComplete {
             suggestionsContainer = container.querySelector('.suggestions-container'),
             componentContext = this;
 
-        suggestionsContainer.addEventListener('mouseover', (event) => {
+        container.onKeyDownHandler = this.constructor._onKeyDownHandler.bind(this, container);
+        container.onInputHandler = this.constructor._onInputHandler.bind(this, container);
+        container.onBlurHandler = this.constructor._onBlurHandler.bind(this, container);
+
+        suggestionsContainer.onMouseOverHandler = (event) => {
             const suggestion = componentContext.constructor._getParentByClassName(event.target, 'auto-complete-suggestion', 'suggestions-container');
             if (suggestion) {
                 componentContext.constructor._onSuggestionMouseOver(suggestion, container);
             }
-        });
+        };
+        suggestionsContainer.addEventListener('mouseover', suggestionsContainer.onMouseOverHandler);
 
-        suggestionsContainer.addEventListener('mouseout', (event) => {
+        suggestionsContainer.onMouseOutHandler = (event) => {
             const suggestion = componentContext.constructor._getParentByClassName(event.target, 'auto-complete-suggestion', 'suggestions-container');
             if (suggestion) {
                 componentContext.constructor._onSuggestionMouseOut(suggestion, container);
             }
-        });
+        };
+        suggestionsContainer.addEventListener('mouseout', suggestionsContainer.onMouseOutHandler);
 
-        suggestionsContainer.addEventListener('mousedown', (event) => {
+        suggestionsContainer.onMouseDownHandler = (event) => {
             const suggestion = componentContext.constructor._getParentByClassName(event.target, 'auto-complete-suggestion', 'suggestions-container');
             if (suggestion) {
                 componentContext.constructor._onSuggestionMouseDown(suggestion, container);
             }
-        });
+        };
+        suggestionsContainer.addEventListener('mousedown', suggestionsContainer.onMouseDownHandler);
 
-        container.keyDownHandler = this.constructor._onKeyDownHandler.bind(this, container);
-        container.onInputHandler = this.constructor._onInputHandler.bind(this, container);
-
-        containerInput.addEventListener('keydown', container.keyDownHandler);
+        containerInput.addEventListener('keydown', container.onKeyDownHandler);
         containerInput.addEventListener('input', container.onInputHandler);
+        containerInput.addEventListener('blur', container.onBlurHandler);
     }
 
     /**
@@ -269,10 +294,23 @@ export default class AutoComplete {
         }
 
         containers.forEach(container => {
-            const containerInput = container.querySelector('.auto-complete-input');
+            const
+                containerInput = container.querySelector('.auto-complete-input'),
+                suggestionsContainer = container.querySelector('.suggestions-container');
 
-            containerInput.removeEventListener('keydown', container.keyDownHandler);
+            containerInput.removeEventListener('keydown', container.onKeyDownHandler);
             containerInput.removeEventListener('input', container.onInputHandler);
+            containerInput.removeEventListener('input', container.onBlurHandler);
+            suggestionsContainer.removeEventListener('mouseover', suggestionsContainer.onMouseOverHandler);
+            suggestionsContainer.removeEventListener('mouseout', suggestionsContainer.onMouseOutHandler);
+            suggestionsContainer.removeEventListener('mousedown', suggestionsContainer.onMouseDownHandler);
+
+            container.onKeyDownHandler = null;
+            container.onInputHandler = null;
+            container.onBlurHandler = null;
+            suggestionsContainer.onMouseOverHandler = null;
+            suggestionsContainer.onMouseOutHandler = null;
+            suggestionsContainer.onMouseDownHandler = null;
         });
     }
 }
