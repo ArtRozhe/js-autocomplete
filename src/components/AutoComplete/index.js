@@ -174,8 +174,18 @@ export default class AutoComplete {
      * @private
      */
     static _onInputHandler(autocompleteContainer, event) {
+        const
+            input = event.target,
+            inputValue = input.value,
+            minChars = this.options.minChars;
+
+        if (inputValue.length >= minChars) {
+            console.log('--- time to make request to the data provider!! ---');
+        } else {
+            console.log('--- not enough characters to make request to the data provider!! ---');
+        }
+
         console.log(autocompleteContainer);
-        console.log('--- event input ---', event);
     }
 
     /**
