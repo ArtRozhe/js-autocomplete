@@ -8,12 +8,27 @@ export default class LocalDataProvider extends BaseDataProvider {
      * Creating the local data provider
      * @param {Object} options - data provider options
      * @param {Array} options.data - local data for filtering
+     * @param {function} options.selectStrategyCb - search strategy in an array of data for a given phrase
      * @param {boolean} options.useCache - use or not use the cache
      */
     constructor(options) {
         super(options);
 
         this.data = options.data;
+        this.selectStrategyCb = options.selectStrategyCb || this.constructor._dSelectStrategyCb;
+    }
+
+    /**
+     * Default search strategy in an array of data for a given phrase
+     * @param {string} search - search string
+     * @param {string} item - local data array element
+     * @param {number} index - index of an element in an array of data
+     * @param {Object} data - data array
+     * @returns {boolean} - should or should not be included in the final date set
+     * @private
+     */
+    static _dSelectStrategyCb(search, item) {
+        return item.indexOf(search) !== -1;
     }
 
     /**
@@ -23,10 +38,10 @@ export default class LocalDataProvider extends BaseDataProvider {
      * @private
      */
     _getSelection(search) {
-        /* the logic of the selection of the data from the existing data stored by the provider */
-        console.log(`--- selection by ${search} from ${this.data} ---`);
+        const data = this.data;
 
-        return this.data;
+        /* simple logic: just look for occurrences of a substring in a string */
+        return data.filter(this.selectStrategyCb.bind(null, search));
     }
 
     /**

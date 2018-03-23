@@ -137,9 +137,8 @@ export default class AutoComplete {
      * @returns {undefined}
      * @private
      */
-    static _onSuggestionMouseOver(suggestion, autocompleteContainer) {
+    static _onSuggestionMouseOver(suggestion) {
         console.log('--- mouse over ---', suggestion);
-        console.log('--- autocompleteContainer ---', autocompleteContainer);
     }
 
     /**
@@ -149,9 +148,8 @@ export default class AutoComplete {
      * @returns {undefined}
      * @private
      */
-    static _onSuggestionMouseOut(suggestion, autocompleteContainer) {
+    static _onSuggestionMouseOut(suggestion) {
         console.log('--- mouse out ---', suggestion);
-        console.log('--- autocompleteContainer ---', autocompleteContainer);
     }
 
     /**
@@ -161,9 +159,8 @@ export default class AutoComplete {
      * @returns {undefined}
      * @private
      */
-    static _onSuggestionMouseDown(suggestion, autocompleteContainer) {
+    static _onSuggestionMouseDown(suggestion) {
         console.log('--- mouse down ---', suggestion);
-        console.log('--- autocompleteContainer ---', autocompleteContainer);
     }
 
     /**
