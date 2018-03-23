@@ -5,12 +5,14 @@ import './assets/scss/app.scss';
 import data from './data-providers/data.json';
 
 const
-    autoComplete = new AutoComplete({
-        containers: '.auto-complete'
-    }),
     localDataProvider = new LocalDataProvider({
         data: data.capitals,
         useCache: false
+    }),
+    autoComplete = new AutoComplete({
+        containers: '.auto-complete',
+        delay: 500,
+        dataProvider: localDataProvider
     }),
     apiDataProvider = new ApiDataProvider({
         apiPath: 'https://example.com',

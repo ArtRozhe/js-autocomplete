@@ -17,7 +17,7 @@ export default class AutoComplete {
      * @param {number} options.delay - the number of milliseconds that the component waits to send a request to the data provider
      * @param {number} options.minChars - the minimum number of entered characters to send requests to the data provider
      * @param {function} options.generateLayoutSuggestion - the markup generation function for each suggestion
-     * @param {Object} options.dataSource - the data provider to which the component sends a request to receive the data set
+     * @param {Object} options.dataProvider - the data provider to which the component sends a request to receive the data set
      */
     constructor(options) {
         this.options = {
@@ -26,7 +26,7 @@ export default class AutoComplete {
             delay: 100,
             minChars: 3,
             generateLayoutSuggestion: this.constructor._defaultGenerateLayoutSuggestion,
-            dataSourceProvider: null
+            dataProvider: null
         };
 
         this._setOptions(options);
@@ -173,16 +173,29 @@ export default class AutoComplete {
     static _onInputHandler(autocompleteContainer, event) {
         const
             input = event.target,
-            inputValue = input.value,
-            minChars = this.options.minChars;
+            currentInputValue = input.value,
+            minChars = this.options.minChars,
+            dataProvider = this.options.dataProvider,
+            lastInputValue = autocompleteContainer.lastInputValue,
+            requestDelay = this.options.delay;
 
-        if (inputValue.length >= minChars) {
-            console.log('--- time to make request to the data provider!! ---');
+        if (currentInputValue.length >= minChars) {
+            if (currentInputValue !== lastInputValue) {
+                clearTimeout(autocompleteContainer.timerId);
+                autocompleteContainer.lastInputValue = currentInputValue;
+
+                autocompleteContainer.timerId = setTimeout(() => {
+                    console.log('--- time to make request to the data provider!! ---');
+                    dataProvider.getDataSet(currentInputValue)
+                        .then(dataSet => {
+                            console.log('--- dataSet ---', dataSet);
+                        });
+                }, requestDelay);
+            }
         } else {
             console.log('--- not enough characters to make request to the data provider!! ---');
+            autocompleteContainer.lastInputValue = currentInputValue;
         }
-
-        console.log(autocompleteContainer);
     }
 
     /**
@@ -284,6 +297,8 @@ export default class AutoComplete {
         }
 
         containers.forEach((container) => {
+            container.lastInputValue = null;
+            container.timerId = null;
             container.appendChild(componentContext.constructor._createDomEl('suggestions-container'));
             componentContext._bindEventListeners(container);
         });
