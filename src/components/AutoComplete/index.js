@@ -32,6 +32,13 @@ export default class AutoComplete {
         this._setOptions(options);
         this._setContainers(this.options.containers);
 
+        this.classNames = {
+            suggestionsContainer: 'suggestions-container',
+            suggestion: 'auto-complete-suggestion',
+            suggestionsContainerShow: 'suggestions-container_show',
+            input: 'auto-complete-input'
+        };
+
         if (this.options.autoRun) {
             this.run();
         }
@@ -106,7 +113,6 @@ export default class AutoComplete {
     static _createDomEl(className) {
         const element = document.createElement('div');
         element.classList.add(className);
-        element.innerHTML = '<div class="auto-complete-suggestion">Test 1</div><div class="auto-complete-suggestion">Test 2</div>';
         return element;
     }
 
@@ -127,7 +133,7 @@ export default class AutoComplete {
             return element;
         }
 
-        return this.constructor._getParentByClassName(element.parentNode, className, stopClassName);
+        return this._getParentByClassName(element.parentNode, className, stopClassName);
     }
 
     /**
@@ -164,6 +170,25 @@ export default class AutoComplete {
     }
 
     /**
+     * Creating suggestions list
+     * @param {Array} dataSet - data set for rendering
+     * @param {string} search - searching text
+     * @returns {string} suggestionsHtml - suggestions list
+     * @private
+     */
+    _createSuggestions(dataSet, search) {
+        let suggestionsHtml = '';
+        const
+            componentContext = this;
+
+        dataSet.forEach(suggestion => {
+            suggestionsHtml = `${suggestionsHtml}<div class="auto-complete-suggestion">${componentContext.options.generateLayoutSuggestion(suggestion, search)}</div>`;
+        });
+
+        return suggestionsHtml;
+    }
+
+    /**
      * Input value change handler
      * @param {Object} autocompleteContainer - autocomplete DOM-container
      * @param {Object} event - input event
@@ -177,7 +202,9 @@ export default class AutoComplete {
             minChars = this.options.minChars,
             dataProvider = this.options.dataProvider,
             lastInputValue = autocompleteContainer.lastInputValue,
-            requestDelay = this.options.delay;
+            requestDelay = this.options.delay,
+            componentContext = this,
+            suggestionsContainer = autocompleteContainer.querySelector(`.${componentContext.classNames.suggestionsContainer}`);
 
         if (currentInputValue.length >= minChars) {
             if (currentInputValue !== lastInputValue) {
@@ -185,16 +212,20 @@ export default class AutoComplete {
                 autocompleteContainer.lastInputValue = currentInputValue;
 
                 autocompleteContainer.timerId = setTimeout(() => {
-                    console.log('--- time to make request to the data provider!! ---');
                     dataProvider.getDataSet(currentInputValue)
                         .then(dataSet => {
-                            console.log('--- dataSet ---', dataSet);
+                            if (dataSet.length > 0) {
+                                suggestionsContainer.innerHTML = componentContext._createSuggestions(dataSet, currentInputValue);
+                                suggestionsContainer.classList.add(this.classNames.suggestionsContainerShow);
+                            } else {
+                                suggestionsContainer.classList.remove(componentContext.classNames.suggestionsContainerShow);
+                            }
                         });
                 }, requestDelay);
             }
         } else {
-            console.log('--- not enough characters to make request to the data provider!! ---');
             autocompleteContainer.lastInputValue = currentInputValue;
+            suggestionsContainer.classList.remove(componentContext.classNames.suggestionsContainerShow);
         }
     }
 
@@ -246,8 +277,8 @@ export default class AutoComplete {
      */
     _bindEventListeners(container) {
         const
-            containerInput = container.querySelector('.auto-complete-input'),
-            suggestionsContainer = container.querySelector('.suggestions-container'),
+            containerInput = container.querySelector(`.${this.classNames.input}`),
+            suggestionsContainer = container.querySelector(`.${this.classNames.suggestionsContainer}`),
             componentContext = this;
 
         container.onKeyDownHandler = this.constructor._onKeyDownHandler.bind(this, container);
@@ -255,7 +286,11 @@ export default class AutoComplete {
         container.onBlurHandler = this.constructor._onBlurHandler.bind(this, container);
 
         suggestionsContainer.onMouseOverHandler = (event) => {
-            const suggestion = componentContext.constructor._getParentByClassName(event.target, 'auto-complete-suggestion', 'suggestions-container');
+            const suggestion = componentContext.constructor._getParentByClassName(
+                event.target,
+                componentContext.classNames.suggestion,
+                componentContext.classNames.suggestionsContainer
+            );
             if (suggestion) {
                 componentContext.constructor._onSuggestionMouseOver(suggestion, container);
             }
@@ -263,7 +298,11 @@ export default class AutoComplete {
         suggestionsContainer.addEventListener('mouseover', suggestionsContainer.onMouseOverHandler);
 
         suggestionsContainer.onMouseOutHandler = (event) => {
-            const suggestion = componentContext.constructor._getParentByClassName(event.target, 'auto-complete-suggestion', 'suggestions-container');
+            const suggestion = componentContext.constructor._getParentByClassName(
+                event.target,
+                componentContext.classNames.suggestion,
+                componentContext.classNames.suggestionsContainer
+            );
             if (suggestion) {
                 componentContext.constructor._onSuggestionMouseOut(suggestion, container);
             }
@@ -271,7 +310,11 @@ export default class AutoComplete {
         suggestionsContainer.addEventListener('mouseout', suggestionsContainer.onMouseOutHandler);
 
         suggestionsContainer.onMouseDownHandler = (event) => {
-            const suggestion = componentContext.constructor._getParentByClassName(event.target, 'auto-complete-suggestion', 'suggestions-container');
+            const suggestion = componentContext.constructor._getParentByClassName(
+                event.target,
+                componentContext.classNames.suggestion,
+                componentContext.classNames.suggestionsContainer
+            );
             if (suggestion) {
                 componentContext.constructor._onSuggestionMouseDown(suggestion, container);
             }
@@ -299,7 +342,7 @@ export default class AutoComplete {
         containers.forEach((container) => {
             container.lastInputValue = null;
             container.timerId = null;
-            container.appendChild(componentContext.constructor._createDomEl('suggestions-container'));
+            container.appendChild(componentContext.constructor._createDomEl(componentContext.classNames.suggestionsContainer));
             componentContext._bindEventListeners(container);
         });
     }
@@ -309,7 +352,9 @@ export default class AutoComplete {
      * @returns {undefined}
      */
     destroy() {
-        const containers = this._getContainers();
+        const
+            containers = this._getContainers(),
+            componentContext = this;
 
         if (!containers) {
             return;
@@ -317,8 +362,8 @@ export default class AutoComplete {
 
         containers.forEach(container => {
             const
-                containerInput = container.querySelector('.auto-complete-input'),
-                suggestionsContainer = container.querySelector('.suggestions-container');
+                containerInput = container.querySelector(`.${componentContext.classNames.input}`),
+                suggestionsContainer = container.querySelector(`.${componentContext.classNames.suggestionsContainer}`);
 
             containerInput.removeEventListener('keydown', container.onKeyDownHandler);
             containerInput.removeEventListener('input', container.onInputHandler);

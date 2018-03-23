@@ -11,8 +11,9 @@ const
     }),
     autoComplete = new AutoComplete({
         containers: '.auto-complete',
-        delay: 500,
-        dataProvider: localDataProvider
+        delay: 150,
+        dataProvider: localDataProvider,
+        minChars: 1
     }),
     apiDataProvider = new ApiDataProvider({
         apiPath: 'https://example.com',
