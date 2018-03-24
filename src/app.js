@@ -22,11 +22,6 @@ const
 
 window.autoComplete = autoComplete;
 
-localDataProvider.getDataSet('a')
-    .then(dataSet => {
-        console.log('--- dataSet ---', dataSet);
-    });
-
 apiDataProvider.getDataSet('test')
     .then(dataSet => {
         console.log('--- dataSet ---', dataSet);

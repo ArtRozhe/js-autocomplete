@@ -2,7 +2,60 @@
 
 body {
   background: $bgcolor;
+  font-family: 'Roboto', Arial, sans-serif;
+  font-weight: normal;
   color: $color;
+}
+
+input[type=email],
+input[type=text] {
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 9px 13px;
+  font: inherit;
+  background: #fff;
+  border-radius: 2px;
+  overflow: hidden;
+  font-size: 16px;
+  line-height: 22px;
+  color: $inputcolor;
+  box-shadow:
+          0 2px 2px 0 rgba(0,0,0,0.16),
+          0 0 0 1px rgba(0,0,0,0.08);
+  transition: box-shadow 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+input[type=email]:focus,
+input[type=text]:focus {
+  box-shadow:
+          0 3px 8px 0 rgba(0,0,0,0.2),
+          0 0 0 1px rgba(0,0,0,0.08);
+}
+
+input[type=email]::-webkit-input-placeholder,
+input[type=text]::-webkit-input-placeholder {
+  color: $placeholdercolor;
+}
+
+input[type=email]::-moz-placeholder,
+input[type=text]::-moz-placeholder {
+  color: $placeholdercolor;
+}
+
+input[type=email]:-ms-input-placeholder,
+input[type=text]:-ms-input-placeholder {
+  color: $placeholdercolor;
+}
+
+.container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.title {
+  font-weight: normal;
 }
 
 .auto-complete,
@@ -21,9 +74,25 @@ body {
   width: 100%;
   top: 100%;
   max-height: 220px;
-  border: 1px solid black;
+  background: #fff;
+  box-shadow:
+          0 2px 2px 0 rgba(0,0,0,0.16),
+          0 0 0 1px rgba(0,0,0,0.08);
+  transition: box-shadow 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 .suggestions-container_show {
   display: block;
+}
+
+.auto-complete-suggestion {
+  padding: 9px 13px;
+}
+
+.auto-complete-suggestion:hover {
+  cursor: pointer;
+}
+
+.auto-complete-suggestion.active {
+  background: $bgsugactive;
 }

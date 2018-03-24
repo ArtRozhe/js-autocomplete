@@ -216,7 +216,7 @@ export default class AutoComplete {
                         .then(dataSet => {
                             if (dataSet.length > 0) {
                                 suggestionsContainer.innerHTML = componentContext._createSuggestions(dataSet, currentInputValue);
-                                suggestionsContainer.classList.add(this.classNames.suggestionsContainerShow);
+                                suggestionsContainer.classList.add(componentContext.classNames.suggestionsContainerShow);
                             } else {
                                 suggestionsContainer.classList.remove(componentContext.classNames.suggestionsContainerShow);
                             }
