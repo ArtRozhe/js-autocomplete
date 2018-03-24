@@ -169,6 +169,14 @@ export default class AutoComplete {
         this._selectSuggestion(suggestion, suggestionsContainer, containerInput);
     }
 
+    /**
+     * Selecting suggestion
+     * @param {Object} suggestion - suggestion
+     * @param {Object} suggestionsContainer - DOM element contains all suggestions
+     * @param {Object} containerInput - autocomplete component input
+     * @returns {undefined}
+     * @private
+     */
     _selectSuggestion(suggestion, suggestionsContainer, containerInput) {
         containerInput.value = suggestion.innerText;
         suggestionsContainer.classList.remove(this.classNames.suggestionsContainerShow);
