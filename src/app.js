@@ -7,7 +7,10 @@ import data from './data-providers/data.json';
 const
     localDataProvider = new LocalDataProvider({
         data: data.capitals,
-        useCache: false
+        useCache: false,
+        selectStrategyCb: (search, dataItem) => {
+            return dataItem.toLowerCase().indexOf(search.toLowerCase()) !== -1;
+        }
     }),
     autoComplete = new AutoComplete({
         containers: '.auto-complete',

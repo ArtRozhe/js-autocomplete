@@ -10,7 +10,7 @@ const charCodes = {
  */
 export default class AutoComplete {
     /**
-     * Создание экземпляра компонента
+     * Creating autocomplete component
      * @param {Object} options - options of the component
      * @param {boolean} options.autoRun - auto run of the component
      * @param {Object|string|Array} options.containers - DOM containers
@@ -51,10 +51,9 @@ export default class AutoComplete {
      * @returns {string} resultHtml - generated markup for a suggestion
      * @private
      */
-    static _defaultGenerateLayoutSuggestion(suggestionText, searchingText) {
+    static _defaultGenerateLayoutSuggestion(suggestionText) {
         let resultHtml = '';
 
-        console.log('--- searchingText ---', searchingText);
         resultHtml = `${resultHtml}<div>${suggestionText}</div>`;
 
         return resultHtml;
@@ -144,7 +143,7 @@ export default class AutoComplete {
      * @private
      */
     static _onSuggestionMouseOver(suggestion) {
-        console.log('--- mouse over ---', suggestion);
+        suggestion.classList.add('active');
     }
 
     /**
@@ -155,18 +154,24 @@ export default class AutoComplete {
      * @private
      */
     static _onSuggestionMouseOut(suggestion) {
-        console.log('--- mouse out ---', suggestion);
+        suggestion.classList.remove('active');
     }
 
     /**
      * Handling mouse down event on a suggestion
      * @param {Object} suggestion - suggestion
-     * @param {Object} autocompleteContainer - autocomplete component DOM container
+     * @param {Object} suggestionsContainer - DOM element contains all suggestions
+     * @param {Object} containerInput - autocomplete component input
      * @returns {undefined}
      * @private
      */
-    static _onSuggestionMouseDown(suggestion) {
-        console.log('--- mouse down ---', suggestion);
+    _onSuggestionMouseDown(suggestion, suggestionsContainer, containerInput) {
+        this._selectSuggestion(suggestion, suggestionsContainer, containerInput);
+    }
+
+    _selectSuggestion(suggestion, suggestionsContainer, containerInput) {
+        containerInput.value = suggestion.innerText;
+        suggestionsContainer.classList.remove(this.classNames.suggestionsContainerShow);
     }
 
     /**
@@ -231,14 +236,13 @@ export default class AutoComplete {
 
     /**
      * Blur event handler
-     * @param {Object} autocompleteContainer - autocomplete DOM-container
+     * @param {Object} suggestionsContainer - DOM element contains all suggestions
      * @param {Object} event - blur event
      * @returns {undefined}
      * @private
      */
-    static _onBlurHandler(autocompleteContainer, event) {
-        console.log(autocompleteContainer);
-        console.log('--- event blur ---', event);
+    _onBlurHandler(suggestionsContainer) {
+        suggestionsContainer.classList.remove(this.classNames.suggestionsContainerShow);
     }
 
     /**
@@ -283,7 +287,7 @@ export default class AutoComplete {
 
         container.onKeyDownHandler = this.constructor._onKeyDownHandler.bind(this, container);
         container.onInputHandler = this.constructor._onInputHandler.bind(this, container);
-        container.onBlurHandler = this.constructor._onBlurHandler.bind(this, container);
+        container.onBlurHandler = this._onBlurHandler.bind(this, suggestionsContainer);
 
         suggestionsContainer.onMouseOverHandler = (event) => {
             const suggestion = componentContext.constructor._getParentByClassName(
@@ -316,7 +320,7 @@ export default class AutoComplete {
                 componentContext.classNames.suggestionsContainer
             );
             if (suggestion) {
-                componentContext.constructor._onSuggestionMouseDown(suggestion, container);
+                componentContext._onSuggestionMouseDown(suggestion, suggestionsContainer, containerInput);
             }
         };
         suggestionsContainer.addEventListener('mousedown', suggestionsContainer.onMouseDownHandler);
