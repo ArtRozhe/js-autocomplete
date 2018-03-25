@@ -1,28 +1,20 @@
-import AutoComplete from './components/AutoComplete';
-import LocalDataProvider from './data-providers/local';
-import ApiDataProvider from './data-providers/api';
-import './assets/scss/app.scss';
+/* eslint no-unused-vars: "off" */
+
 import data from './data-providers/data.json';
+import './assets/scss/auto-complete.scss';
 
 const
-    localDataProvider = new LocalDataProvider({
+    localDataProvider = new window.LocalDataProvider({
         data: data.simpleStrings,
         useCache: true
     }),
-    autoComplete = new AutoComplete({
+    /*apiDataProvider = new window.ApiDataProvider({
+        apiPath: 'http://localhost:3003/dataSet?search=',
+        useCache: true
+    }),*/
+    autoComplete = new window.AutoComplete({
         containers: '.auto-complete',
         delay: 150,
         dataProvider: localDataProvider,
         minChars: 1
-    }),
-    apiDataProvider = new ApiDataProvider({
-        apiPath: 'https://example.com',
-        useCache: false
-    });
-
-window.autoComplete = autoComplete;
-
-apiDataProvider.getDataSet('test')
-    .then(dataSet => {
-        console.log('--- dataSet ---', dataSet);
     });

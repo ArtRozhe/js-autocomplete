@@ -5,6 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Autocomplete</title>
+  <style>
+    body {
+      background: #f6f9fc;
+      font-family: 'Roboto', Arial, sans-serif;
+      font-weight: normal;
+      color: #050505;
+    }
+
+    input[type=email],
+    input[type=text] {
+      border: none;
+      outline: none;
+      margin: 0;
+      padding: 9px 13px;
+      font: inherit;
+      background: #fff;
+      border-radius: 2px;
+      overflow: hidden;
+      font-size: 16px;
+      line-height: 22px;
+      color: #32325d;
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+      transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    input[type=email]:focus,
+    input[type=text]:focus {
+      box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    }
+
+    input[type=email]::-webkit-input-placeholder,
+    input[type=text]::-webkit-input-placeholder {
+      color: #aab7c4;
+    }
+
+    input[type=email]::-moz-placeholder,
+    input[type=text]::-moz-placeholder {
+      color: #aab7c4;
+    }
+
+    input[type=email]:-ms-input-placeholder,
+    input[type=text]:-ms-input-placeholder {
+      color: #aab7c4;
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .title {
+      font-weight: normal;
+    }
+    .auto-complete,
+    .auto-complete * {
+      box-sizing: border-box;
+    }
+  </style>
+  <link rel="stylesheet" href="./assets/css/auto-complete.css">
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 </head>
 <body>
@@ -14,5 +74,9 @@
       <input type="text" class="auto-complete-input rav-input" placeholder="typing...">
     </div>
   </div>
+  <script src="./assets/js/AutoComplete.bundle.js" defer></script>
+  <script src="./assets/js/LocalDataProvider.bundle.js" defer></script>
+  <script src="./assets/js/ApiDataProvider.bundle.js" defer></script>
+  <script src="./assets/js/app.bundle.js" defer></script>
 </body>
 </html>
