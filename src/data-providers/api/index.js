@@ -11,6 +11,8 @@ export default class ApiDataProvider extends BaseDataProvider {
      */
     constructor(options) {
         super(options);
+
+        this.apiPath = options.apiPath;
     }
 
     /**
@@ -19,20 +21,38 @@ export default class ApiDataProvider extends BaseDataProvider {
      * @returns {Promise} - a promise that will end successfully with a data set, or fail with an error
      */
     getDataSet(search) {
-        const dataProviderContext = this;
+        const
+            useCache = this.useCache,
+            apiPath = this.apiPath,
+            dataProviderContext = this;
 
         return new Promise((resolve, reject) => {
             let result = null;
-            console.log('--- data provider ---', dataProviderContext);
-            console.log('--- search ---', search);
 
-            result = ['example suggesting'];
+            if (useCache) {
+                result = dataProviderContext._getCache(search);
 
-            if (result) {
-                resolve(result);
-            } else {
-                reject(new Error('error while retrieving data from the server'));
+                if (result) {
+                    resolve(result);
+                    return;
+                }
             }
+
+            fetch(`${apiPath}${search}`)
+                .then(res => res.json())
+                .then(dataSet => {
+                    if (dataSet) {
+                        resolve(dataSet);
+                        if (useCache) {
+                            dataProviderContext._setCache(search, dataSet);
+                        }
+                    } else {
+                        reject(new Error('error while retrieving data from the server'));
+                    }
+                })
+                .catch(() => {
+                    reject(new Error('error while retrieving data from the server'));
+                });
         });
     }
 }
