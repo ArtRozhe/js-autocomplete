@@ -1,9 +1,10 @@
-const charCodes = {
-    'up': 38,
-    'down': 40,
-    'esc': 27,
-    'enter': 13
-};
+import {
+    createDomEl,
+    getParentByClassName,
+    getNextSiblingByClassName,
+    getPrevSiblingByClassName,
+    charCodes
+} from './helpers';
 
 /**
  * AutoComplete component
@@ -36,7 +37,9 @@ export default class AutoComplete {
             suggestionsContainer: 'suggestions-container',
             suggestion: 'auto-complete-suggestion',
             suggestionsContainerShow: 'suggestions-container_show',
-            input: 'auto-complete-input'
+            input: 'auto-complete-input',
+            suggestionActive: 'active',
+            suggestionsGroupTitle: 'suggestions-group-title'
         };
 
         if (this.options.autoRun) {
@@ -104,46 +107,20 @@ export default class AutoComplete {
     }
 
     /**
-     * Create DOM element by class name
-     * @param {string} className - class name
-     * @returns {Object} element - DOM element
-     * @private
-     */
-    static _createDomEl(className) {
-        const element = document.createElement('div');
-        element.classList.add(className);
-        return element;
-    }
-
-    /**
-     * Getting parent element with needed className
-     * @param {Object} element - the element from which the search begins
-     * @param {string} className - className the element must have
-     * @param {string} stopClassName - if an element has stopClassName, then the function returns null in any case
-     * @returns {Object} - element with needed className
-     * @private
-     */
-    static _getParentByClassName(element, className, stopClassName) {
-        if (!element || element.classList.contains(stopClassName)) {
-            return null;
-        }
-
-        if (element.classList.contains(className)) {
-            return element;
-        }
-
-        return this._getParentByClassName(element.parentNode, className, stopClassName);
-    }
-
-    /**
      * Handling mouse over event on a suggestion
      * @param {Object} suggestion - suggestion
      * @param {Object} autocompleteContainer - autocomplete component DOM container
      * @returns {undefined}
      * @private
      */
-    static _onSuggestionMouseOver(suggestion) {
-        suggestion.classList.add('active');
+    _onSuggestionMouseOver(suggestion, autocompleteContainer) {
+        const active = autocompleteContainer.querySelector(`.${this.classNames.suggestionActive}`);
+
+        if (active) {
+            active.classList.remove(this.classNames.suggestionActive);
+        }
+
+        suggestion.classList.add(this.classNames.suggestionActive);
     }
 
     /**
@@ -153,33 +130,75 @@ export default class AutoComplete {
      * @returns {undefined}
      * @private
      */
-    static _onSuggestionMouseOut(suggestion) {
-        suggestion.classList.remove('active');
+    _onSuggestionMouseOut(suggestion) {
+        suggestion.classList.remove(this.classNames.suggestionActive);
     }
 
     /**
      * Handling mouse down event on a suggestion
      * @param {Object} suggestion - suggestion
      * @param {Object} suggestionsContainer - DOM element contains all suggestions
+     * @param {Object} autocompleteContainer - autocomplete component DOM container
      * @param {Object} containerInput - autocomplete component input
      * @returns {undefined}
      * @private
      */
-    _onSuggestionMouseDown(suggestion, suggestionsContainer, containerInput) {
-        this._selectSuggestion(suggestion, suggestionsContainer, containerInput);
+    _onSuggestionMouseDown(suggestion, suggestionsContainer, autocompleteContainer, containerInput) {
+        this._selectSuggestion(suggestion, suggestionsContainer, autocompleteContainer, containerInput);
     }
 
     /**
      * Selecting suggestion
      * @param {Object} suggestion - suggestion
      * @param {Object} suggestionsContainer - DOM element contains all suggestions
+     * @param {Object} autocompleteContainer - autocomplete component DOM container
      * @param {Object} containerInput - autocomplete component input
      * @returns {undefined}
      * @private
      */
-    _selectSuggestion(suggestion, suggestionsContainer, containerInput) {
-        containerInput.value = suggestion.innerText;
-        suggestionsContainer.classList.remove(this.classNames.suggestionsContainerShow);
+    _selectSuggestion(suggestion, suggestionsContainer, autocompleteContainer, containerInput) {
+        if (!suggestion) {
+            return;
+        }
+
+        const newValue = suggestion.getAttribute('data-suggestion');
+
+        containerInput.value = newValue;
+        autocompleteContainer.lastInputValue = newValue;
+        this._closeSuggestionsContainer(suggestionsContainer);
+    }
+
+    /**
+     * Creating a single suggestion container
+     * @param {string} suggestion - suggestion text
+     * @param {string} search - searching text
+     * @returns {string} - html result
+     * @private
+     */
+    _createSingleSuggestion(suggestion, search) {
+        return `<div class="auto-complete-suggestion" data-suggestion="${suggestion}">${this.options.generateLayoutSuggestion(suggestion, search)}</div>`;
+    }
+
+    /**
+     * Creating a suggestions group with a title
+     * @param {Object} group - suggestions group
+     * @param {string} search - searching text
+     * @returns {string} - html result
+     * @private
+     */
+    _createGroupSuggestions(group, search) {
+        let groupHtml = '';
+        const
+            groupTitle = group.title,
+            groupData = group.data,
+            componentContext = this;
+
+        groupHtml = `<h4 class="${componentContext.classNames.suggestionsGroupTitle}">${groupTitle}</h4>`;
+        groupData.forEach(dataItem => {
+            groupHtml = `${groupHtml}${componentContext._createSingleSuggestion(dataItem, search)}`;
+        });
+
+        return groupHtml;
     }
 
     /**
@@ -194,11 +213,83 @@ export default class AutoComplete {
         const
             componentContext = this;
 
-        dataSet.forEach(suggestion => {
-            suggestionsHtml = `${suggestionsHtml}<div class="auto-complete-suggestion">${componentContext.options.generateLayoutSuggestion(suggestion, search)}</div>`;
+        dataSet.forEach(dataItem => {
+            if (Object.prototype.toString.call(dataItem) === '[object Object]') {
+                suggestionsHtml = `${suggestionsHtml}${componentContext._createGroupSuggestions(dataItem, search)}`;
+            } else {
+                suggestionsHtml = `${suggestionsHtml}${componentContext._createSingleSuggestion(dataItem, search)}`;
+            }
         });
 
         return suggestionsHtml;
+    }
+
+    /**
+     * Closing suggestions container
+     * @param {Object} suggestionsContainer - DOM element contains all suggestions
+     * @returns {undefined}
+     * @private
+     */
+    _closeSuggestionsContainer(suggestionsContainer) {
+        suggestionsContainer.classList.remove(this.classNames.suggestionsContainerShow);
+    }
+
+    /**
+     * Selecting next suggestion in the list of the suggestions
+     * @param {Object} suggestionsContainer - DOM element contains all suggestions
+     * @param {Object} containerInput - autocomplete component input
+     * @returns {undefined}
+     * @private
+     */
+    _selectNextSuggestion(suggestionsContainer, containerInput) {
+        let active = suggestionsContainer.querySelector(`.${this.classNames.suggestionActive}`);
+
+        if (!active) {
+            active = suggestionsContainer.querySelector(`.${this.classNames.suggestion}`);
+        } else {
+            active.classList.remove(`${this.classNames.suggestionActive}`);
+            active = getNextSiblingByClassName(active.nextSibling, this.classNames.suggestion);
+
+            if (!active) {
+                active = suggestionsContainer.querySelector(`.${this.classNames.suggestion}`);
+            }
+        }
+
+        if (active) {
+            suggestionsContainer.classList.add(this.classNames.suggestionsContainerShow);
+
+            active.classList.add(`${this.classNames.suggestionActive}`);
+            containerInput.value = active.getAttribute('data-suggestion');
+        }
+    }
+
+    /**
+     * Selecting previous suggestion in the list of the suggestions
+     * @param {Object} suggestionsContainer - DOM element contains all suggestions
+     * @param {Object} containerInput - autocomplete component input
+     * @returns {undefined}
+     * @private
+     */
+    _selectPrevSuggestion(suggestionsContainer, containerInput) {
+        let active = suggestionsContainer.querySelector(`.${this.classNames.suggestionActive}`);
+
+        if (!active) {
+            active = suggestionsContainer.childNodes[suggestionsContainer.childNodes.length - 1];
+        } else {
+            active.classList.remove(`${this.classNames.suggestionActive}`);
+            active = getPrevSiblingByClassName(active.previousSibling, this.classNames.suggestion);
+
+            if (!active) {
+                active = suggestionsContainer.childNodes[suggestionsContainer.childNodes.length - 1];
+            }
+        }
+
+        if (active) {
+            suggestionsContainer.classList.add(this.classNames.suggestionsContainerShow);
+
+            active.classList.add(`${this.classNames.suggestionActive}`);
+            containerInput.value = active.getAttribute('data-suggestion');
+        }
     }
 
     /**
@@ -208,7 +299,7 @@ export default class AutoComplete {
      * @returns {undefined}
      * @private
      */
-    static _onInputHandler(autocompleteContainer, event) {
+    _onInputHandler(autocompleteContainer, event) {
         const
             input = event.target,
             currentInputValue = input.value,
@@ -250,7 +341,7 @@ export default class AutoComplete {
      * @private
      */
     _onBlurHandler(suggestionsContainer) {
-        suggestionsContainer.classList.remove(this.classNames.suggestionsContainerShow);
+        this._closeSuggestionsContainer(suggestionsContainer);
     }
 
     /**
@@ -260,24 +351,32 @@ export default class AutoComplete {
      * @returns {undefined}
      * @private
      */
-    static _onKeyDownHandler(autocompleteContainer, event) {
-        console.log(autocompleteContainer);
-        const keyCode = event.which || event.keyCode;
+    _onKeyDownHandler(autocompleteContainer, event) {
+        const
+            containerInput = event.target,
+            keyCode = event.which || event.keyCode,
+            suggestionsContainer = autocompleteContainer.querySelector(`.${this.classNames.suggestionsContainer}`);
 
         if (keyCode === charCodes.down) {
-            console.log('--- key down "DownArrow" ---');
+            this._selectNextSuggestion(suggestionsContainer, containerInput);
         }
 
         if (keyCode === charCodes.up) {
-            console.log('--- key down "DownUp" ---');
+            this._selectPrevSuggestion(suggestionsContainer, containerInput);
         }
 
         if (keyCode === charCodes.esc) {
-            console.log('--- key down "Esc" ---');
+            this._closeSuggestionsContainer(suggestionsContainer);
+            containerInput.value = autocompleteContainer.lastInputValue;
         }
 
         if (keyCode === charCodes.enter) {
-            console.log('--- key down "Enter" ---');
+            this._selectSuggestion(
+                suggestionsContainer.querySelector(`.${this.classNames.suggestionActive}`),
+                suggestionsContainer,
+                autocompleteContainer,
+                containerInput
+            );
         }
     }
 
@@ -293,42 +392,42 @@ export default class AutoComplete {
             suggestionsContainer = container.querySelector(`.${this.classNames.suggestionsContainer}`),
             componentContext = this;
 
-        container.onKeyDownHandler = this.constructor._onKeyDownHandler.bind(this, container);
-        container.onInputHandler = this.constructor._onInputHandler.bind(this, container);
+        container.onKeyDownHandler = this._onKeyDownHandler.bind(this, container);
+        container.onInputHandler = this._onInputHandler.bind(this, container);
         container.onBlurHandler = this._onBlurHandler.bind(this, suggestionsContainer);
 
         suggestionsContainer.onMouseOverHandler = (event) => {
-            const suggestion = componentContext.constructor._getParentByClassName(
+            const suggestion = getParentByClassName(
                 event.target,
                 componentContext.classNames.suggestion,
                 componentContext.classNames.suggestionsContainer
             );
             if (suggestion) {
-                componentContext.constructor._onSuggestionMouseOver(suggestion, container);
+                componentContext._onSuggestionMouseOver(suggestion, container);
             }
         };
         suggestionsContainer.addEventListener('mouseover', suggestionsContainer.onMouseOverHandler);
 
         suggestionsContainer.onMouseOutHandler = (event) => {
-            const suggestion = componentContext.constructor._getParentByClassName(
+            const suggestion = getParentByClassName(
                 event.target,
                 componentContext.classNames.suggestion,
                 componentContext.classNames.suggestionsContainer
             );
             if (suggestion) {
-                componentContext.constructor._onSuggestionMouseOut(suggestion, container);
+                componentContext._onSuggestionMouseOut(suggestion, container);
             }
         };
         suggestionsContainer.addEventListener('mouseout', suggestionsContainer.onMouseOutHandler);
 
         suggestionsContainer.onMouseDownHandler = (event) => {
-            const suggestion = componentContext.constructor._getParentByClassName(
+            const suggestion = getParentByClassName(
                 event.target,
                 componentContext.classNames.suggestion,
                 componentContext.classNames.suggestionsContainer
             );
             if (suggestion) {
-                componentContext._onSuggestionMouseDown(suggestion, suggestionsContainer, containerInput);
+                componentContext._onSuggestionMouseDown(suggestion, suggestionsContainer, container, containerInput);
             }
         };
         suggestionsContainer.addEventListener('mousedown', suggestionsContainer.onMouseDownHandler);
@@ -354,13 +453,13 @@ export default class AutoComplete {
         containers.forEach((container) => {
             container.lastInputValue = null;
             container.timerId = null;
-            container.appendChild(componentContext.constructor._createDomEl(componentContext.classNames.suggestionsContainer));
+            container.appendChild(createDomEl(componentContext.classNames.suggestionsContainer));
             componentContext._bindEventListeners(container);
         });
     }
 
     /**
-     * Deleting an instance of a component
+     * Unbinding all event listeners
      * @returns {undefined}
      */
     destroy() {
