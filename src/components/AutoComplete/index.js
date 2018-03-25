@@ -55,10 +55,11 @@ export default class AutoComplete {
      * @returns {string} resultHtml - generated markup for a suggestion
      * @private
      */
-    static _defaultGenerateLayoutSuggestion(suggestionText) {
+    static _defaultGenerateLayoutSuggestion(suggestionText, searchingText) {
         let resultHtml = '';
+        const re = new RegExp(`(${searchingText.split(' ').join('|')})`, 'gi');
 
-        resultHtml = `${resultHtml}<div>${suggestionText}</div>`;
+        resultHtml = `${resultHtml}<div>${suggestionText.replace(re, '<b>$1</b>')}</div>`;
 
         return resultHtml;
     }
@@ -301,38 +302,34 @@ export default class AutoComplete {
     /**
      * Input value change handler
      * @param {Object} autocompleteContainer - autocomplete DOM-container
-     * @param {Object} event - input event
+     * @param {Object} containerInput - autocomplete component input
      * @returns {undefined}
      * @private
      */
-    _onInputHandler(autocompleteContainer, event) {
+    _onInputHandler(autocompleteContainer, containerInput) {
         const
-            input = event.target,
-            currentInputValue = input.value,
+            currentInputValue = containerInput.value,
             minChars = this.options.minChars,
             dataProvider = this.options.dataProvider,
-            lastInputValue = autocompleteContainer.lastInputValue,
             requestDelay = this.options.delay,
             componentContext = this,
             suggestionsContainer = autocompleteContainer.querySelector(`.${componentContext.classNames.suggestionsContainer}`);
 
         if (currentInputValue.length >= minChars) {
-            if (currentInputValue !== lastInputValue) {
-                clearTimeout(autocompleteContainer.timerId);
-                autocompleteContainer.lastInputValue = currentInputValue;
+            clearTimeout(autocompleteContainer.timerId);
+            autocompleteContainer.lastInputValue = currentInputValue;
 
-                autocompleteContainer.timerId = setTimeout(() => {
-                    dataProvider.getDataSet(currentInputValue)
-                        .then(dataSet => {
-                            if (dataSet.length > 0) {
-                                suggestionsContainer.innerHTML = componentContext._createSuggestions(dataSet, currentInputValue);
-                                suggestionsContainer.classList.add(componentContext.classNames.suggestionsContainerShow);
-                            } else {
-                                suggestionsContainer.classList.remove(componentContext.classNames.suggestionsContainerShow);
-                            }
-                        });
-                }, requestDelay);
-            }
+            autocompleteContainer.timerId = setTimeout(() => {
+                dataProvider.getDataSet(currentInputValue)
+                    .then(dataSet => {
+                        if (dataSet.length > 0) {
+                            suggestionsContainer.innerHTML = componentContext._createSuggestions(dataSet, currentInputValue);
+                            suggestionsContainer.classList.add(componentContext.classNames.suggestionsContainerShow);
+                        } else {
+                            suggestionsContainer.classList.remove(componentContext.classNames.suggestionsContainerShow);
+                        }
+                    });
+            }, requestDelay);
         } else {
             autocompleteContainer.lastInputValue = currentInputValue;
             suggestionsContainer.classList.remove(componentContext.classNames.suggestionsContainerShow);
@@ -364,11 +361,27 @@ export default class AutoComplete {
             suggestionsContainer = autocompleteContainer.querySelector(`.${this.classNames.suggestionsContainer}`);
 
         if (keyCode === charCodes.down) {
-            this._selectNextSuggestion(suggestionsContainer, containerInput);
+            if (containerInput.value === '') {
+                return;
+            }
+
+            if (!suggestionsContainer.classList.contains(this.classNames.suggestionsContainerShow)) {
+                this._onInputHandler(autocompleteContainer, containerInput);
+            } else {
+                this._selectNextSuggestion(suggestionsContainer, containerInput);
+            }
         }
 
         if (keyCode === charCodes.up) {
-            this._selectPrevSuggestion(suggestionsContainer, containerInput);
+            if (containerInput.value === '') {
+                return;
+            }
+
+            if (!suggestionsContainer.classList.contains(this.classNames.suggestionsContainerShow)) {
+                this._onInputHandler(autocompleteContainer, containerInput);
+            } else {
+                this._selectPrevSuggestion(suggestionsContainer, containerInput);
+            }
         }
 
         if (keyCode === charCodes.esc) {
@@ -399,7 +412,7 @@ export default class AutoComplete {
             componentContext = this;
 
         container.onKeyDownHandler = this._onKeyDownHandler.bind(this, container);
-        container.onInputHandler = this._onInputHandler.bind(this, container);
+        container.onInputHandler = this._onInputHandler.bind(this, container, containerInput);
         container.onBlurHandler = this._onBlurHandler.bind(this, suggestionsContainer);
 
         suggestionsContainer.onMouseOverHandler = (event) => {
