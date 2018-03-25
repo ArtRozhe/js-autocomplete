@@ -59,7 +59,7 @@ export default class AutoComplete {
         let resultHtml = '';
         const re = new RegExp(`(${searchingText.split(' ').join('|')})`, 'gi');
 
-        resultHtml = `${resultHtml}<div>${suggestionText.replace(re, '<b>$1</b>')}</div>`;
+        resultHtml = `${resultHtml}<div>${suggestionText.replace(re, '<span style="color: #0097A7;">$1</span>')}</div>`;
 
         return resultHtml;
     }

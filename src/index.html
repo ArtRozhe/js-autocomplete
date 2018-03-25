@@ -6,7 +6,15 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Autocomplete</title>
   <style>
+    *,
+    *:before,
+    *:after {
+      box-sizing: border-box;
+    }
+
     body {
+      margin: 0;
+      padding: 0;
       background: #f6f9fc;
       font-family: 'Roboto', Arial, sans-serif;
       font-weight: normal;
@@ -50,30 +58,276 @@
       color: #aab7c4;
     }
 
+    ul li {
+      margin-bottom: 10px;
+    }
+
     .container {
       max-width: 1040px;
       margin: 0 auto;
       padding: 0 20px;
     }
 
+    .container_main {
+      padding: 20px 15px;
+      margin-bottom: 30px;
+      max-width: 770px;
+      background: #fff;
+      box-shadow: 0 0 2px rgba(0,0,0,.12), 0 2px 4px rgba(0,0,0,.24);
+    }
+
     .title {
+      margin: 0;
       font-weight: normal;
     }
-    .auto-complete,
-    .auto-complete * {
-      box-sizing: border-box;
+
+    .main-header {
+      padding-top: 20px;
+      background-color: #0097A7;
+      color: #fff;
+    }
+
+    .main-header__container {
+      min-height: 110px;
+      position: relative;
+      padding-bottom: 30px;
+    }
+
+    .main-header__bottom {
+      position: absolute;
+      bottom: 0;
+      height: 30px;
+      left: 50%;
+      margin-left: -385px;
+      width: 770px;
+      background: #fff;
+    }
+
+    .example {
+      margin-bottom: 40px;
+    }
+
+    .example__code {
+      display: block;
+      padding-top: 20px;
+      margin-top: 20px;
+      background: #eee;
     }
   </style>
   <link rel="stylesheet" href="./assets/css/auto-complete.css">
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
-    <h1 class="title">AutoComplete component</h1>
-    <div class="auto-complete">
-      <input type="text" class="auto-complete-input rav-input" placeholder="typing...">
+  <div class="main-header">
+    <div class="container main-header__container">
+      <h1 class="title">AutoComplete component</h1>
+      <div class="main-header__bottom"></div>
     </div>
   </div>
+  <main>
+    <div class="container container_main">
+      <h2>Examples</h2>
+      <div class="example">
+        <h3 class="example__title">Example 1</h3>
+        <div class="example_demo">
+          <div class="auto-complete auto-complete_ex-1">
+            <input type="text" class="auto-complete-input rav-input" placeholder="typing...">
+          </div>
+        </div>
+        <ul class="example__description">
+          <li>The number of array elements is more than 600.</li>
+          <li>data provider: LocalDataProvider</li>
+          <li>AutoComplete options:
+            <ul>
+              <li>minChars: 3 (default)</li>
+              <li>delay: 150 (default)</li>
+              <li>autoRun: true (default)</li>
+            </ul>
+          </li>
+          <li>LocalDataProvider options:
+            <ul>
+              <li>useCache: true (default)</li>
+            </ul>
+          </li>
+        </ul>
+        <pre class="example__code">
+          let localDataProviderEx1 = new LocalDataProvider({
+            data: [
+              'Abasto',
+              'Acassuso',
+              'Acebal',
+              'Acevedo',
+              'Adelia Maria',
+              'Agua de Oro',
+              'Albardon',
+              'Albarellos',
+              'Alberdi',
+              ...
+            ]
+          });
+
+          let autoCompleteEx1 = new AutoComplete({
+            containers: '.auto-complete_ex-1',
+            dataProvider: localDataProviderEx1
+          });
+        </pre>
+      </div>
+      <div class="example">
+        <h3 class="example__title">Example 2</h3>
+        <div class="example_demo">
+          <div class="auto-complete auto-complete_ex-2">
+            <input type="text" class="auto-complete-input rav-input" placeholder="typing...">
+          </div>
+        </div>
+        <ul class="example__description">
+          <li>Grouped data</li>
+          <li>data provider: LocalDataProvider</li>
+          <li>AutoComplete options:
+            <ul>
+              <li>minChars: 1</li>
+              <li>delay: 50</li>
+              <li>autoRun: true (default)</li>
+            </ul>
+          </li>
+          <li>LocalDataProvider options:
+            <ul>
+              <li>useCache: true (default)</li>
+            </ul>
+          </li>
+        </ul>
+        <pre class="example__code">
+          let localDataProviderEx2 = new LocalDataProvider({
+            data: [
+              {
+                "title": "A",
+                "data": ["Ab", "Abc", "Abcd"]
+              },
+              {
+                "title": "B",
+                "data": ["Bc", "Bcd", "Bcde"]
+              },
+              {
+                "title": "C",
+                "data": ["Cva", "Cba", "Cna"]
+              },
+              {
+                "title": "A",
+                "data": ["Ava", "Aba", "Ana"]
+              },
+              ...
+            ]
+          });
+
+          let autocomplete = new AutoComplete({
+            containers: '.auto-complete_ex-2',
+            dataProvider: localDataProviderEx2
+          });
+        </pre>
+      </div>
+      <div class="example">
+        <h3 class="example__title">Example 3</h3>
+        <div class="example_demo">
+          <div class="auto-complete auto-complete_ex-3">
+            <input type="text" class="auto-complete-input rav-input" placeholder="typing...">
+          </div>
+        </div>
+        <p class="example__description">The setting generateLayoutSuggestion callback:</p>
+        <pre class="example__code">
+          let localDataProviderEx3 = new LocalDataProvider({
+            data: [
+              'Abasto',
+              'Acassuso',
+              'Acebal',
+              'Acevedo',
+              'Adelia Maria',
+              'Agua de Oro',
+              'Albardon',
+              'Albarellos',
+              'Alberdi',
+              ...
+            ]
+          });
+
+          let autoCompleteEx3 = new AutoComplete({
+            containers: '.auto-complete_ex-3',
+            dataProvider: localDataProviderEx3,
+            minChars: 1,
+            delay: 50,
+            generateLayoutSuggestion: function(suggestionText, searchingText) {
+              let resultHtml = '';
+              const re = new RegExp(`(${searchingText.split(' ').join('|')})`, 'gi');
+
+              resultHtml = `${resultHtml}&lt;div&gt;${suggestionText.replace(re,
+                '&lt;span style="color: #FF5722;"&gt;$1&lt;/span&gt;')}&lt;/div&gt;`;
+
+              return resultHtml;
+            }
+          });
+        </pre>
+      </div>
+      <div class="example">
+        <h3 class="example__title">Example 4</h3>
+        <div class="example_demo">
+          <div class="auto-complete auto-complete_ex-4">
+            <input type="text" class="auto-complete-input rav-input" placeholder="typing...">
+          </div>
+        </div>
+        <p class="example__description">
+          <b>For this example you need to start the server with command "npm run server".
+          The server will start at <i>http://localhost:3003</i></b>
+          <ul>
+            <li>data provider: ApiDataProvider</li>
+            <li>AutoComplete options:
+              <ul>
+                <li>minChars: 1</li>
+                <li>delay: 50</li>
+                <li>autoRun: true (default)</li>
+              </ul>
+            </li>
+            <li>ApiDataProvider options:
+              <ul>
+                <li>useCache: true (default)</li>
+                <li>apiPath: http://localhost:3003</li>
+              </ul>
+            </li>
+          </ul>
+        </p>
+        <pre class="example__code">
+          let apiDataProviderEx4 = new ApiDataProvider({
+            apiPath: 'http://localhost:3003/dataSet?search='
+          });
+
+          let autoCompleteEx4 = new AutoComplete({
+            containers: '.auto-complete_ex-4',
+            dataProvider: apiDataProviderEx4,
+            minChars: 1,
+            delay: 50
+          });
+        </pre>
+      </div>
+      <h2>Options</h2>
+      <h3>AutoComplete component</h3>
+      <ul>
+        <li><b>autoRun</b> - auto run of the component (default: <b>true</b>);</li>
+        <li><b>containers</b> - DOM containers (array, selector, or single DOM container) (default: <b>null</b>);</li>
+        <li><b>delay</b> - the number of milliseconds that the component waits to send a request to the data provider (default: <b>100</b>);</li>
+        <li><b>minChars</b> - the minimum number of entered characters to send requests to the data provider (default: <b>3</b>);</li>
+        <li><b>generateLayoutSuggestion</b> - the markup generation function for each suggestion (default: <b>function</b>);</li>
+        <li><b>dataProvider</b> - the data provider to which the component sends a request to receive the data set (default: <b>null</b>);</li>
+      </ul>
+      <h3>LocalDataProvider</h3>
+      <ul>
+        <li><b>data</b> - local data for filtering (default: <b>null</b>);</li>
+        <li><b>selectionCb</b> - search strategy in an array of data for a given phrase (default: <b>function</b>);</li>
+        <li><b>useCache</b> - use or not use the cache (default: <b>true</b>);</li>
+      </ul>
+      <h3>ApiDataProvider</h3>
+      <ul>
+        <li><b>apiPath</b> - path to the api (default: <b>null</b>);</li>
+        <li><b>useCache</b> - use or not use the cache (default: <b>true</b>);</li>
+      </ul>
+    </div>
+  </main>
   <script src="./assets/js/AutoComplete.bundle.js" defer></script>
   <script src="./assets/js/LocalDataProvider.bundle.js" defer></script>
   <script src="./assets/js/ApiDataProvider.bundle.js" defer></script>

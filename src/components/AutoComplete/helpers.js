@@ -30,6 +30,12 @@ function getParentByClassName(element, className, stopClassName) {
     return getParentByClassName(element.parentNode, className, stopClassName);
 }
 
+/**
+ * Getting next sibling in the container by className
+ * @param {Object} element - DOM element
+ * @param {string} className - className that the sibling must have
+ * @returns {Object} next - DOM element with needed className
+ */
 function getNextSiblingByClassName(element, className) {
     if (!element) {
         return null;
@@ -42,6 +48,12 @@ function getNextSiblingByClassName(element, className) {
     return getNextSiblingByClassName(element.nextSibling, className);
 }
 
+/**
+ * Getting previous sibling in the container by className
+ * @param {Object} element - DOM element
+ * @param {string} className - className that the sibling must have
+ * @returns {Object} next - DOM element with needed className
+ */
 function getPrevSiblingByClassName(element, className) {
     if (!element) {
         return null;
@@ -54,6 +66,12 @@ function getPrevSiblingByClassName(element, className) {
     return getPrevSiblingByClassName(element.previousSibling, className);
 }
 
+/**
+ * Scroll to the active element
+ * @param {Object} container - a container that contains an active element
+ * @param {Object} element - an active element
+ * @returns {undefined}
+ */
 function scrollToElement(container, element) {
     const
         containerMaxHeight = parseInt(getComputedStyle(container).maxHeight, 10),

@@ -8,11 +8,12 @@ export default class ApiDataProvider extends BaseDataProvider {
      * Creating the data provider that receives the data set from the server
      * @param {Object} options - data provider options
      * @param {boolean} options.useCache - use or not use the cache
+     * @param {string} options.apiPath - path to the api
      */
     constructor(options) {
         super(options);
 
-        this.apiPath = options.apiPath;
+        this.apiPath = options.apiPath || null;
     }
 
     /**

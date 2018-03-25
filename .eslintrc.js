@@ -33,7 +33,6 @@ module.exports = {
         "prefer-template": "warn",
         "no-useless-concat": "error",
         "prefer-const": "error",
-        "no-magic-numbers": "warn",
         "no-self-compare": "error",
         "getter-return": "error",
         "no-extra-parens": "error",

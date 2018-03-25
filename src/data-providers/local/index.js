@@ -14,7 +14,7 @@ export default class LocalDataProvider extends BaseDataProvider {
     constructor(options) {
         super(options);
 
-        this.data = options.data;
+        this.data = options.data || null;
         this.selectionCb = options.selectionCb || this.constructor._dSelectionCb;
     }
 

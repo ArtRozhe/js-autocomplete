@@ -10,7 +10,7 @@ app.get('/dataSet', (request, response) => {
         search = request.query.search;
     if (search) {
         response.header('Access-Control-Allow-Origin', '*');
-        response.send(getDataSet(data.simpleStrings, search));
+        response.send(getDataSet(data.cities, search));
     } else {
         response.send([]);
     }
