@@ -7,12 +7,10 @@ export default class BaseDataProvider extends AbstractDataProvider {
     constructor(options) {
         super();
 
-        /* last received data set */
-        this.cache = null;
-        this.useCache = true;
+        /* cache object */
+        this.cache = {};
 
-        /* last search text */
-        this.search = null;
+        this.useCache = true;
 
         if (typeof options.useCache !== 'undefined') {
             this.useCache = options.useCache;
@@ -21,20 +19,31 @@ export default class BaseDataProvider extends AbstractDataProvider {
 
     /**
      * Saving data set to the cache
+     * @param {string} key - key
      * @param {Array} data - data set to save
      * @returns {undefined}
      * @private
      */
-    _setCache(data) {
-        this.cache = data;
+    _setCache(key, data) {
+        this.cache[key] = data;
     }
 
     /**
      * Getting the data set from the cache
+     * @param {string} key - key
      * @returns {Array} - data set
      * @private
      */
-    _getCache() {
-        return this.cache;
+    _getCache(key) {
+        return this.cache[key];
+    }
+
+    /**
+     * Clear cache object
+     * @returns {undefined}
+     * @private
+     */
+    _clearCache() {
+        this.cache = {};
     }
 }

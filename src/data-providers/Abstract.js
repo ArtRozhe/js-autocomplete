@@ -10,6 +10,10 @@ export default class AbstractDataProvider {
         throw new Error('You have to implement the method "_getCache" before using it. Super class: ', this.constructor);
     }
 
+    _clearCache() {
+        throw new Error('You have to implement the method "_clearCache" before using it. Super class: ', this.constructor);
+    }
+
     getDataSet() {
         throw new Error('You have to implement the method "getDataSet" before using it. Super class: ', this.constructor);
     }

@@ -54,6 +54,20 @@ function getPrevSiblingByClassName(element, className) {
     return getPrevSiblingByClassName(element.previousSibling, className);
 }
 
+function scrollToElement(container, element) {
+    const
+        containerMaxHeight = parseInt(getComputedStyle(container).maxHeight, 10),
+        elementHeight = element.offsetHeight,
+        containerScrollTop = container.scrollTop,
+        elementPosTop = element.getBoundingClientRect().top - container.getBoundingClientRect().top;
+
+    if (elementPosTop + elementHeight - containerMaxHeight > 0) {
+        container.scrollTop = elementPosTop + elementHeight + containerScrollTop - containerMaxHeight;
+    } else if (elementPosTop < 0) {
+        container.scrollTop = elementPosTop + containerScrollTop;
+    }
+}
+
 const charCodes = {
     'up': 38,
     'down': 40,
@@ -66,5 +80,6 @@ export {
     getParentByClassName,
     getNextSiblingByClassName,
     getPrevSiblingByClassName,
-    charCodes
+    charCodes,
+    scrollToElement
 };

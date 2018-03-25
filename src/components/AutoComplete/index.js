@@ -3,6 +3,7 @@ import {
     getParentByClassName,
     getNextSiblingByClassName,
     getPrevSiblingByClassName,
+    scrollToElement,
     charCodes
 } from './helpers';
 
@@ -144,11 +145,11 @@ export default class AutoComplete {
      * @private
      */
     _onSuggestionMouseDown(suggestion, suggestionsContainer, autocompleteContainer, containerInput) {
-        this._selectSuggestion(suggestion, suggestionsContainer, autocompleteContainer, containerInput);
+        this._confirmSuggestion(suggestion, suggestionsContainer, autocompleteContainer, containerInput);
     }
 
     /**
-     * Selecting suggestion
+     * Confirming a suggestion
      * @param {Object} suggestion - suggestion
      * @param {Object} suggestionsContainer - DOM element contains all suggestions
      * @param {Object} autocompleteContainer - autocomplete component DOM container
@@ -156,7 +157,7 @@ export default class AutoComplete {
      * @returns {undefined}
      * @private
      */
-    _selectSuggestion(suggestion, suggestionsContainer, autocompleteContainer, containerInput) {
+    _confirmSuggestion(suggestion, suggestionsContainer, autocompleteContainer, containerInput) {
         if (!suggestion) {
             return;
         }
@@ -166,6 +167,17 @@ export default class AutoComplete {
         containerInput.value = newValue;
         autocompleteContainer.lastInputValue = newValue;
         this._closeSuggestionsContainer(suggestionsContainer);
+    }
+
+    _selectSuggestion(suggestionsContainer, suggestion, containerInput) {
+        suggestionsContainer.classList.add(this.classNames.suggestionsContainerShow);
+        suggestion.classList.add(`${this.classNames.suggestionActive}`);
+        if (suggestionsContainer.querySelector(`.${this.classNames.suggestion}`) === suggestion) {
+            suggestionsContainer.scrollTop = 0;
+        } else {
+            scrollToElement(suggestionsContainer, suggestion);
+        }
+        containerInput.value = suggestion.getAttribute('data-suggestion');
     }
 
     /**
@@ -256,10 +268,7 @@ export default class AutoComplete {
         }
 
         if (active) {
-            suggestionsContainer.classList.add(this.classNames.suggestionsContainerShow);
-
-            active.classList.add(`${this.classNames.suggestionActive}`);
-            containerInput.value = active.getAttribute('data-suggestion');
+            this._selectSuggestion(suggestionsContainer, active, containerInput);
         }
     }
 
@@ -285,10 +294,7 @@ export default class AutoComplete {
         }
 
         if (active) {
-            suggestionsContainer.classList.add(this.classNames.suggestionsContainerShow);
-
-            active.classList.add(`${this.classNames.suggestionActive}`);
-            containerInput.value = active.getAttribute('data-suggestion');
+            this._selectSuggestion(suggestionsContainer, active, containerInput);
         }
     }
 
@@ -371,7 +377,7 @@ export default class AutoComplete {
         }
 
         if (keyCode === charCodes.enter) {
-            this._selectSuggestion(
+            this._confirmSuggestion(
                 suggestionsContainer.querySelector(`.${this.classNames.suggestionActive}`),
                 suggestionsContainer,
                 autocompleteContainer,

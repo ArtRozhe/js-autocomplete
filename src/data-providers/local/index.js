@@ -8,27 +8,52 @@ export default class LocalDataProvider extends BaseDataProvider {
      * Creating the local data provider
      * @param {Object} options - data provider options
      * @param {Array} options.data - local data for filtering
-     * @param {function} options.selectStrategyCb - search strategy in an array of data for a given phrase
+     * @param {function} options.selectionCb - search strategy in an array of data for a given phrase
      * @param {boolean} options.useCache - use or not use the cache
      */
     constructor(options) {
         super(options);
 
         this.data = options.data;
-        this.selectStrategyCb = options.selectStrategyCb || this.constructor._dSelectStrategyCb;
+        this.selectionCb = options.selectionCb || this.constructor._dSelectionCb;
     }
 
     /**
-     * Default search strategy in an array of data for a given phrase
-     * @param {string} search - search string
-     * @param {string} item - local data array element
-     * @param {number} index - index of an element in an array of data
-     * @param {Object} data - data array
-     * @returns {boolean} - should or should not be included in the final date set
+     * Default selection callback
+     * @param {string} data - all data
+     * @param {Object} search - searching phrase
+     * @returns {Array} - result dataset
      * @private
      */
-    static _dSelectStrategyCb(search, item) {
-        return item.indexOf(search) !== -1;
+    static _dSelectionCb(data, search) {
+        /* simple logic: just look for occurrences of a substring in a string */
+        let result = [];
+
+        if (Object.prototype.toString.call(data[0]) === '[object String]') {
+            result = data.filter(item => {
+                return item.toLowerCase().indexOf(search.toLowerCase()) !== -1;
+            });
+        } else {
+            data.forEach(item => {
+                let innerData = [];
+                if (!item.title || !item.data) {
+                    return;
+                }
+
+                innerData = item.data.filter(innerItem => {
+                    return innerItem.toLowerCase().indexOf(search.toLowerCase()) !== -1;
+                });
+
+                if (innerData.length > 0) {
+                    result.push({
+                        title: item.title,
+                        data: innerData
+                    });
+                }
+            });
+        }
+
+        return result;
     }
 
     /**
@@ -40,8 +65,7 @@ export default class LocalDataProvider extends BaseDataProvider {
     _getSelection(search) {
         const data = this.data;
 
-        /* simple logic: just look for occurrences of a substring in a string */
-        return data.filter(this.selectStrategyCb.bind(null, search));
+        return this.selectionCb(data, search);
     }
 
     /**
@@ -51,6 +75,7 @@ export default class LocalDataProvider extends BaseDataProvider {
      */
     setData(data) {
         this.data = data;
+        this._clearCache();
     }
 
     /**
@@ -59,17 +84,29 @@ export default class LocalDataProvider extends BaseDataProvider {
      * @returns {Promise} - a promise that will end successfully with a data set, or fail with an error
      */
     getDataSet(search) {
-        const dataProviderContext = this;
+        const
+            dataProviderContext = this,
+            useCache = dataProviderContext.useCache;
 
         return new Promise((resolve, reject) => {
             let result = null;
 
-            /* For now, we assume that the provider does not use caching */
-            /* TODO: need to implement the caching mode */
+            if (useCache) {
+                result = dataProviderContext._getCache(search);
+
+                if (result) {
+                    resolve(result);
+                    return;
+                }
+            }
+
             result = dataProviderContext._getSelection(search);
 
             if (result) {
                 resolve(result);
+                if (useCache) {
+                    dataProviderContext._setCache(search, result);
+                }
             } else {
                 reject(new Error('Error while data selection'));
             }

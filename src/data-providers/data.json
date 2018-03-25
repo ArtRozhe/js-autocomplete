@@ -1,5 +1,173 @@
 {
-  "capitals": [
+  "simpleStrings": [
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
+    "Tokyo",
+    "Moscow",
+    "Baku",
+    "Canberra",
+    "Dhaka",
+    "Minsk",
+    "Muscat",
+    "Oslo",
     "Tokyo",
     "Moscow",
     "Baku",
@@ -8,5 +176,115 @@
     "Minsk",
     "Muscat",
     "Oslo"
+  ],
+  "groupedData": [
+    {
+      "title": "A",
+      "data": ["Ava", "Aba", "Ana"]
+    },
+    {
+      "title": "B",
+      "data": ["Bva", "Bba", "Bna"]
+    },
+    {
+      "title": "C",
+      "data": ["Cva", "Cba", "Cna"]
+    },
+    {
+      "title": "A",
+      "data": ["Ava", "Aba", "Ana"]
+    },
+    {
+      "title": "B",
+      "data": ["Bva", "Bba", "Bna"]
+    },
+    {
+      "title": "C",
+      "data": ["Cva", "Cba", "Cna"]
+    },
+    {
+      "title": "A",
+      "data": ["Ava", "Aba", "Ana"]
+    },
+    {
+      "title": "B",
+      "data": ["Bva", "Bba", "Bna"]
+    },
+    {
+      "title": "C",
+      "data": ["Cva", "Cba", "Cna"]
+    },
+    {
+      "title": "A",
+      "data": ["Ava", "Aba", "Ana"]
+    },
+    {
+      "title": "B",
+      "data": ["Bva", "Bba", "Bna"]
+    },
+    {
+      "title": "C",
+      "data": ["Cva", "Cba", "Cna"]
+    },
+    {
+      "title": "A",
+      "data": ["Ava", "Aba", "Ana"]
+    },
+    {
+      "title": "B",
+      "data": ["Bva", "Bba", "Bna"]
+    },
+    {
+      "title": "C",
+      "data": ["Cva", "Cba", "Cna"]
+    },
+    {
+      "title": "A",
+      "data": ["Ava", "Aba", "Ana"]
+    },
+    {
+      "title": "B",
+      "data": ["Bva", "Bba", "Bna"]
+    },
+    {
+      "title": "C",
+      "data": ["Cva", "Cba", "Cna"]
+    },
+    {
+      "title": "A",
+      "data": ["Ava", "Aba", "Ana"]
+    },
+    {
+      "title": "B",
+      "data": ["Bva", "Bba", "Bna"]
+    },
+    {
+      "title": "C",
+      "data": ["Cva", "Cba", "Cna"]
+    },
+    {
+      "title": "A",
+      "data": ["Ava", "Aba", "Ana"]
+    },
+    {
+      "title": "B",
+      "data": ["Bva", "Bba", "Bna"]
+    },
+    {
+      "title": "C",
+      "data": ["Cva", "Cba", "Cna"]
+    },
+    {
+      "title": "A",
+      "data": ["Ava", "Aba", "Ana"]
+    },
+    {
+      "title": "B",
+      "data": ["Bva", "Bba", "Bna"]
+    },
+    {
+      "title": "C",
+      "data": ["Cva", "Cba", "Cna"]
+    }
   ]
 }
