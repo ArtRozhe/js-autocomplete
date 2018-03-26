@@ -1,5 +1,5 @@
 To see the demos clone this repo and open index.html (dist/index.html) in the browser.
-> :warning: For the example with a request to API you need to start server. See below.
+> :warning: For the example with a request to API you need to start the server. See below.
 
 ### Install dependencies
 ```bash
