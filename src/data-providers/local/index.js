@@ -8,7 +8,7 @@ export default class LocalDataProvider extends BaseDataProvider {
      * Creating the local data provider
      * @param {Object} options - data provider options
      * @param {Array} options.data - local data for filtering
-     * @param {function} options.selectionCb - search strategy in an array of data for a given phrase
+     * @param {function} options.selectionCb - the function for the filtering an array of data
      * @param {boolean} options.useCache - use or not use the cache
      */
     constructor(options) {
